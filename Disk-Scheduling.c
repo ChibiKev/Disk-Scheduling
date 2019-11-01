@@ -25,7 +25,7 @@ void cylindersRequest(){ // Obtain Random Cylinder Requests
 				}
 			}
 			if(found == false){ // Not Fount After Looping Through Array
-				printf("%d- random: %d \n", i, random);
+				//printf("%d- random: %d \n", i, random);
 				cylinders[i] = random; // Requesting From a Range From 0-9999
 				break; // Unique Is True So i++. Break.
 			}
@@ -33,52 +33,81 @@ void cylindersRequest(){ // Obtain Random Cylinder Requests
 	}
 }
 
-int FCFS(int cylinders[],int head){
-	int sum = 0;
-	for(int i = 0; i < CYLINDERNUM; i++){
-		sum += abs(head - cylinders[i]);
-		head = cylinders[i];
+int FCFS(int cylinders[],int head){ // First Come First Serve Algorithm
+	int sum = 0; // Sum is Zero
+	for(int i = 0; i < CYLINDERNUM; i++){ // Loop From 1st To End
+		sum += abs(head - cylinders[i]); // Get The Distance Traveled
+		head = cylinders[i]; // New Head Value
 	}
-	return sum;
+	return sum; // Return Total Head Movement
 }
 
-int SSTF(int cylinders[],int head){
-	return 0;
+int SSTF(int cylinders[],int head){ // Shortest Seek Time First Algorithm
+	int sum = 0; // Sum Is Zero
+	int storage[CYLINDERNUM]; // Used So cylinders[] Doesn't Get Modified
+	for(int i = 0; i < CYLINDERNUM; i++){ // Copy
+		storage[i] = cylinders[i]; // Copying
+	}
+	int count = CYLINDERNUM; // Used To Keep Count Of What's Left
+	while(count){ // While There's Still Something Left
+		int min = DISKNUM + 1; // High Min To Prevent Miscalculation
+		int index; // For Index Of Min
+		for(int i = 0; i < count; i++){ // Find Minimum Seek Time
+			if(abs(head - storage[i]) < min){ // If Seek Time Is Lower Than Before
+				min = abs(head - storage[i]); // Replace Min With New Min
+				index = i; // Get Index Of Next Head
+			}
+		}
+		//printf("%d\n",min);
+		sum += abs(head-storage[index]); // Shortest Seek Time
+		head = storage[index]; // New Head Value
+		for(int i = index; i < count; i++){ // Remove Current Head Value
+			storage[i] = storage[i+1]; // Replace It With Everything Ahead
+		} 
+		count--; // Subtract Count
+	}
+	return sum; // Return Total Head Movement
 }
 
-int SCAN(int cylinders[],int head){
-	return 0;
+int SCAN(int cylinders[],int head){ // SCAN Algorithm
+	int sum = 0; // Sum Is Zero
+
+	return sum; // Return Total Head Movement
 }
 
-int CSCAN(int cylinders[],int head){
-	return 0;
+int CSCAN(int cylinders[],int head){ // CSCAN Algorithm
+	int sum = 0; // Sum Is Zero
+
+	return sum; // Return Total Head Movement
 }
 
-int LOOK(int cylinders[],int head){
-	return 0;
+int LOOK(int cylinders[],int head){ // LOOK Algorithm
+	int sum = 0; // Sum Is Zero
+
+	return sum; // Return Total Head Movement
 }
 
 int main(){
 	cylindersRequest(); // Obtain a Random Series of 1000 Cylinders Requests
 	int input; // To Store Disk Head
-	printf("Insert Initial Position of the Disk Head Between 0 and %d: ", CYLINDERNUM - 1); // Print
+	printf("Insert Initial Position of the Disk Head Between 0 and %d: ", DISKNUM - 1); // Print
 	scanf("%d", &input); // Obtain Initial Position of the Disk Head
-	while(input < 0 || input > CYLINDERNUM - 1){ // Makes Sure Input Is Appropriate
-		printf("Incorrect Input. Input Has to be Between 0 and %d. You Inputted %d.\n", CYLINDERNUM - 1, input); // Print
-		printf("Insert Initial Position of the Disk Head Between 0 and %d: ", CYLINDERNUM -1); // Print
-		scanf("%d", &input); // Obtain Initial Position of the Disk Head
+	while(input < 0 || input > DISKNUM - 1){ // Makes Sure Input Is Appropriate
+		printf("Incorrect Input. Input Has to be Between 0 and %d. You Inputted %d.\n", DISKNUM - 1, input); // Print
+		printf("Insert Initial Position of the Disk Head Between 0 and %d: ", DISKNUM -1); // Print
+		scanf("%d", &input); // Obtain Initial Position Of The Disk Head
 	}
-	int FCFS_SUM = FCFS(cylinders,input);
-	int SSTF_SUM = SSTF(cylinders,input);
-	int SCAN_SUM = SCAN(cylinders,input);
-	int CSCAN_SUM = CSCAN(cylinders,input);
-	int LOOK_SUM = LOOK(cylinders,input);
-	printf("Algorithm\t|Total Head Movement\n");
-	printf("________________|___________________\n");
-	printf("FCFS\t\t|%d\n", FCFS_SUM);
-	printf("SSTF\t\t|%d\n", SSTF_SUM);
-	printf("SCAN\t\t|%d\n", SCAN_SUM);
-	printf("CSCAN\t\t|%d\n", CSCAN_SUM);
-	printf("LOOK\t\t|%d\n", LOOK_SUM);
+	int FCFS_SUM = FCFS(cylinders,input); // Store
+	int SSTF_SUM = SSTF(cylinders,input); // Store
+	int SCAN_SUM = SCAN(cylinders,input); // Store
+	int CSCAN_SUM = CSCAN(cylinders,input); // Store
+	int LOOK_SUM = LOOK(cylinders,input); // Store
+	printf("Algorithm\t|Total Head Movement\n"); // Print
+	printf("________________|___________________\n"); // Print
+	printf("FCFS\t\t|%d\n", FCFS_SUM); // Print
+	printf("SSTF\t\t|%d\n", SSTF_SUM); // Print
+	printf("SCAN\t\t|%d\n", SCAN_SUM); // Print
+	printf("CSCAN\t\t|%d\n", CSCAN_SUM); // Print
+	printf("LOOK\t\t|%d\n", LOOK_SUM); // Print
 	return 0;
 }
