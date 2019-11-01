@@ -9,23 +9,26 @@
 
 int cylinders[CYLINDERNUM];
 
+int comp (const void* a, const void* b){ // Comparing Integers For Sorting
+	int *x = (int*) a;
+	int *y = (int*) b;
+	return *x - *y;
+}
+
 void cylindersRequest(){ // Obtain Random Cylinder Requests
-	for(int i = 0; i < CYLINDERNUM; i++){ // Initialize Every Value In Cylinder To -1
-		cylinders[i] = -1; // This Is So That 0 Could Be Apart Of Cylinder
-	}
 	srand(time(NULL)); // Different Seed For Random Number Generator
 	for (int i = 0; i < CYLINDERNUM; i++){ // 1000 Cylinders Request
 		while(1){ // Loop To Make Sure Value Is Unique Before Moving On
 			bool found = false; // Assume Found Is False
 			int random = rand() % DISKNUM; // Random Number From 0 to 9999
-			for (int j = i; j > -1; j--){ // Check To See If It was Entered Already
+			for (int j = i -1 ; j > -1; j--){ // Check To See If It was Entered Already
 				if(cylinders[j] == random){ // If It's Found, It's Not Unique, Break And
 					found = true; // If Found, Found = True and Reloop To Get New Random Value
 					break; // Break Out
 				}
 			}
 			if(found == false){ // Not Fount After Looping Through Array
-				//printf("%d- random: %d \n", i, random);
+				printf("%d- random: %d \n", i, random);
 				cylinders[i] = random; // Requesting From a Range From 0-9999
 				break; // Unique Is True So i++. Break.
 			}
@@ -71,7 +74,33 @@ int SSTF(int cylinders[],int head){ // Shortest Seek Time First Algorithm
 
 int SCAN(int cylinders[],int head){ // SCAN Algorithm
 	int sum = 0; // Sum Is Zero
-
+	int low = 0; // Amount of Values Less Than Head
+	int storeLow[CYLINDERNUM]; // Used To Store Values Less Than Current Head
+	int high = 0; // Amount of Values Higher Than 
+	int storeHigh[CYLINDERNUM]; // Used To Store Values Higher Than Current Head
+	for(int i = 0; i < CYLINDERNUM; i++){  // Parse Array
+		if(cylinders[i] > head){ // Above Head Goes Here
+			storeHigh[high] = cylinders[i]; // Parse
+			high++; // Increase Size Of High
+		}
+		else{ // Below Or Equal To Head Goes Here
+			storeLow[low] = cylinders[i]; // Parse
+			low++; // Increase Size Of Low
+		}
+	}
+	qsort(storeLow, low, sizeof(*storeLow), comp); // Sort Low
+	qsort(storeHigh, high, sizeof(*storeHigh), comp); // Sort High
+	for(int i = low-1; i > -1; i--){ // Start To Descend From Head
+		//printf("head: %d \n", head);
+		sum += head - storeLow[i]; // Head Movement
+		head = storeLow[i]; // New Head Value
+	}
+	for(int i = 0; i < high; i++){ // Start To Ascend From Head
+		//printf("head: %d \n", head);
+		sum += storeHigh[i] - head; // Head Movement
+		head = storeHigh[i]; // New Head Value
+	}
+	//printf("head: %d \n", head);
 	return sum; // Return Total Head Movement
 }
 
