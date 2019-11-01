@@ -106,7 +106,38 @@ int SCAN(int cylinders[],int head){ // SCAN Algorithm
 
 int CSCAN(int cylinders[],int head){ // CSCAN Algorithm
 	int sum = 0; // Sum Is Zero
-
+	int low = 0; // Amount of Values Less Than Head
+	int storeLow[CYLINDERNUM]; // Used To Store Values Less Than Current Head
+	int high = 0; // Amount of Values Higher Than 
+	int storeHigh[CYLINDERNUM]; // Used To Store Values Higher Than Current Head
+	for(int i = 0; i < CYLINDERNUM; i++){  // Parse Array
+		if(cylinders[i] > head){ // Above Head Goes Here
+			storeHigh[high] = cylinders[i]; // Parse
+			high++; // Increase Size Of High
+		}
+		else{ // Below Or Equal To Head Goes Here
+			storeLow[low] = cylinders[i]; // Parse
+			low++; // Increase Size Of Low
+		}
+	}
+	qsort(storeLow, low, sizeof(*storeLow), comp); // Sort Low
+	qsort(storeHigh, high, sizeof(*storeHigh), comp); // Sort High
+	for(int i = low-1; i > -1; i--){ // Start To Descend From Head
+		//printf("head: %d \n", head);
+		sum += head - storeLow[i]; // Head Movement
+		head = storeLow[i]; // New Head Value
+	}
+	for(int i = high-1; i > -1; i--){ // Start To Descend From Head
+		//printf("head: %d \n", head);
+		if (i == high-1){
+			sum += storeHigh[i] - head; // Head Movement
+		}
+		else{
+			sum += head - storeHigh[i]; // Head Movement
+		}
+		head = storeHigh[i]; // New Head Value
+	}
+	//printf("head: %d \n", head);
 	return sum; // Return Total Head Movement
 }
 
