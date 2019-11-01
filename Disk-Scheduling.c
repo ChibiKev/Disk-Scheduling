@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define DISKNUM 5
-#define CYLINDERNUM 3
+#define DISKNUM 10000
+#define CYLINDERNUM 1000
 
 int cylinders[CYLINDERNUM];
 
@@ -28,7 +28,7 @@ void cylindersRequest(){ // Obtain Random Cylinder Requests
 				}
 			}
 			if(found == false){ // Not Fount After Looping Through Array
-				printf("%d- random: %d \n", i, random);
+				//printf("%d- random: %d \n", i, random);
 				cylinders[i] = random; // Requesting From a Range From 0-9999
 				break; // Unique Is True So i++. Break.
 			}
@@ -95,6 +95,8 @@ int SCAN(int cylinders[],int head){ // SCAN Algorithm
 		sum += head - storeLow[i]; // Head Movement
 		head = storeLow[i]; // New Head Value
 	}
+	sum += head - 0; // To Zero
+	head = 0; // Head = 0
 	for(int i = 0; i < high; i++){ // Start To Ascend From Head
 		//printf("head: %d \n", head);
 		sum += storeHigh[i] - head; // Head Movement
@@ -105,6 +107,77 @@ int SCAN(int cylinders[],int head){ // SCAN Algorithm
 }
 
 int CSCAN(int cylinders[],int head){ // CSCAN Algorithm
+	int sum = 0; // Sum Is Zero
+	int low = 0; // Amount of Values Less Than Head
+	int storeLow[CYLINDERNUM]; // Used To Store Values Less Than Current Head
+	int high = 0; // Amount of Values Higher Than 
+	int storeHigh[CYLINDERNUM]; // Used To Store Values Higher Than Current Head
+	for(int i = 0; i < CYLINDERNUM; i++){  // Parse Array
+		if(cylinders[i] > head){ // Above Head Goes Here
+			storeHigh[high] = cylinders[i]; // Parse
+			high++; // Increase Size Of High
+		}
+		else{ // Below Or Equal To Head Goes Here
+			storeLow[low] = cylinders[i]; // Parse
+			low++; // Increase Size Of Low
+		}
+	}
+	qsort(storeLow, low, sizeof(*storeLow), comp); // Sort Low
+	qsort(storeHigh, high, sizeof(*storeHigh), comp); // Sort High
+	for(int i = low-1; i > -1; i--){ // Start To Descend From Head
+		//printf("head: %d \n", head);
+		sum += head - storeLow[i]; // Head Movement
+		head = storeLow[i]; // New Head Value
+	}
+	sum += head - 0; // To Zero
+	head = 0; // Head = 0
+	for(int i = high-1; i > -1; i--){ // Start To Descend From Head
+		//printf("head: %d \n", head);
+		if (i == high-1){
+			sum += storeHigh[i] - head; // Head Movement
+		}
+		else{
+			sum += head - storeHigh[i]; // Head Movement
+		}
+		head = storeHigh[i]; // New Head Value
+	}
+	//printf("head: %d \n", head);
+	return sum; // Return Total Head Movement
+}
+
+int LOOK(int cylinders[],int head){ // LOOK Algorithm
+	int sum = 0; // Sum Is Zero
+	int low = 0; // Amount of Values Less Than Head
+	int storeLow[CYLINDERNUM]; // Used To Store Values Less Than Current Head
+	int high = 0; // Amount of Values Higher Than 
+	int storeHigh[CYLINDERNUM]; // Used To Store Values Higher Than Current Head
+	for(int i = 0; i < CYLINDERNUM; i++){  // Parse Array
+		if(cylinders[i] > head){ // Above Head Goes Here
+			storeHigh[high] = cylinders[i]; // Parse
+			high++; // Increase Size Of High
+		}
+		else{ // Below Or Equal To Head Goes Here
+			storeLow[low] = cylinders[i]; // Parse
+			low++; // Increase Size Of Low
+		}
+	}
+	qsort(storeLow, low, sizeof(*storeLow), comp); // Sort Low
+	qsort(storeHigh, high, sizeof(*storeHigh), comp); // Sort High
+	for(int i = low-1; i > -1; i--){ // Start To Descend From Head
+		//printf("head: %d \n", head);
+		sum += head - storeLow[i]; // Head Movement
+		head = storeLow[i]; // New Head Value
+	}
+	for(int i = 0; i < high; i++){ // Start To Ascend From Head
+		//printf("head: %d \n", head);
+		sum += storeHigh[i] - head; // Head Movement
+		head = storeHigh[i]; // New Head Value
+	}
+	//printf("head: %d \n", head);
+	return sum; // Return Total Head Movement
+}
+
+int CLOOK(int cylinders[],int head){ // CLOOK Algorithm
 	int sum = 0; // Sum Is Zero
 	int low = 0; // Amount of Values Less Than Head
 	int storeLow[CYLINDERNUM]; // Used To Store Values Less Than Current Head
@@ -141,12 +214,6 @@ int CSCAN(int cylinders[],int head){ // CSCAN Algorithm
 	return sum; // Return Total Head Movement
 }
 
-int LOOK(int cylinders[],int head){ // LOOK Algorithm
-	int sum = 0; // Sum Is Zero
-
-	return sum; // Return Total Head Movement
-}
-
 int main(){
 	cylindersRequest(); // Obtain a Random Series of 1000 Cylinders Requests
 	int input; // To Store Disk Head
@@ -162,6 +229,7 @@ int main(){
 	int SCAN_SUM = SCAN(cylinders,input); // Store
 	int CSCAN_SUM = CSCAN(cylinders,input); // Store
 	int LOOK_SUM = LOOK(cylinders,input); // Store
+	int CLOOK_SUM = CLOOK(cylinders,input); // Store
 	printf("Algorithm\t|Total Head Movement\n"); // Print
 	printf("________________|___________________\n"); // Print
 	printf("FCFS\t\t|%d\n", FCFS_SUM); // Print
@@ -169,5 +237,6 @@ int main(){
 	printf("SCAN\t\t|%d\n", SCAN_SUM); // Print
 	printf("CSCAN\t\t|%d\n", CSCAN_SUM); // Print
 	printf("LOOK\t\t|%d\n", LOOK_SUM); // Print
+	printf("CLOOK\t\t|%d\n", CLOOK_SUM); // Print
 	return 0;
 }
