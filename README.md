@@ -11,5 +11,9 @@ Project for CSC 332 - Operating Systems with Professor Zaid Al-Mashhadni at the 
 ## Additional Information
 - There are comments in the code that illustrates the thought process and exactly what each line of code is doing.
 - I added an extra disk-scheduling algorithm, CLOOK.
+- I've tested that everything works using a small value then going higher and higher. I printed out each random number and head that it iterated through and did the math to see if it matched for each function. [DiskScheduling.JPG](images/DiskScheduling.JPG) is what was printed when running the program. During each time it ran, the output vary based on what has randomly generated and the starting head value
+## Using the Application
+### Disk Scheduling
+![](images/DiskScheduling.JPG)
 ## Ask me about anything
 If there are any questions, feel free to ask them [here](https://github.com/ChibiKev/Disk-Scheduling/issues).
